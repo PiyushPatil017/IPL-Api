@@ -23,7 +23,33 @@ class NpEncoder(json.JSONEncoder):
 
 
 def team_api(team):
-    pass
+    temp_df = df[(df['bowling_team'] == team) | (df['batting_team'] == team)].groupby('match_id').tail(1)
+
+    # Overall record of team
+    total_match = temp_df.shape[0]
+    total_win = temp_df[(temp_df['winning_team'] == team) | (temp_df['superover_winner'] == team)]['winning_team'].count()
+    total_draw = temp_df[temp_df['result_type'] == 'no result']['result_type'].count()
+    total_loss = total_match - total_win - total_draw
+    trophy = temp_df[(temp_df['stage'] == 'Final') & (temp_df['winning_team'] == team)]['winning_team'].count()
+
+    team_overall_dict = {'Overall': {'Total Match': total_match,
+                                     'Total Win': total_win,
+                                     'Total Loss': total_loss,
+                                     'Total Draw': total_draw,
+                                     'Trophys': trophy}
+                         }
+    # Season wise record of team
+    team_season_dict = {season: {} for season in temp_df['season'].unique()}
+    for season in team_season_dict:
+        team_season_dict[season]['Matches'] = temp_df[temp_df['season'] == season]['batting_team'].count()
+        team_season_dict[season]['Won'] = temp_df[(temp_df['season'] == season) & ((temp_df['winning_team'] == team) | (temp_df['superover_winner'] == team))]['winning_team'].count()
+        team_season_dict[season]['Draw'] = temp_df[(temp_df['season'] == season) & (temp_df['result_type'] == 'no result')]['result_type'].count()
+        team_season_dict[season]['Loss'] = team_season_dict[season]['Matches'] - team_season_dict[season]['Won'] - team_season_dict[season]['Draw']
+
+    team_overall_dict['Season'] = team_season_dict
+
+    return json.dumps(team_overall_dict, cls=NpEncoder, indent=4)
+
 
 def team_vs_team_api(team1,team2):
     pass

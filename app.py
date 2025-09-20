@@ -35,6 +35,7 @@ def team_vs_team():
 def team():
     team = request.args.get('team')
     response = api.team_api(team)
+    print(response)
     return response
 
 
