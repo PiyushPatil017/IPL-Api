@@ -1,8 +1,7 @@
 # import modules
 import numpy as np
 import pandas as pd
-import warnings
-warnings.filterwarnings('ignore')
+
 pd.options.display.max_columns = None
 
 matches = pd.read_csv('Dataset/IPL 2008-2025 Matches.csv')
