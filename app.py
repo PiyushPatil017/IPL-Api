@@ -23,7 +23,7 @@ def player_vs_team():
     return response
 
 
-@app.route('/team-vs-team')
+@app.route('/team_vs_team')
 def team_vs_team():
     team1 = request.args.get('team1')
     team2 = request.args.get('team2')

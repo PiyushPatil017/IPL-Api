@@ -10,6 +10,27 @@ df['team2'] = df['team2'].apply(lambda x: x.split(','))
 df['season'] = df['season'].astype('category')
 df['date'] = pd.to_datetime(df['date'])
 
+ipl_teams_hometowns = {
+    "Chennai Super Kings": "Chennai",
+    "Mumbai Indians": "Mumbai",
+    "Kolkata Knight Riders": "Kolkata",
+    "Royal Challengers Bengaluru": "Bengaluru",
+    "Rajasthan Royals": "Jaipur",
+    "Sunrisers Hyderabad": "Hyderabad",
+    "Delhi Capitals": "Delhi",
+    "Punjab Kings": "Mohali",
+    "Lucknow Super Giants": "Lucknow",
+    "Gujarat Titans": "Ahmedabad",
+
+    # Former Teams
+    "Deccan Chargers": "Hyderabad",
+    "Pune Warriors India": "Pune",
+    "Rising Pune Supergiant": "Pune",
+    "Kochi Tuskers Kerala": "Kochi",
+    "Gujarat Lions": "Rajkot, Gujarat"
+}
+
+
 # convert obj from np type to normal type
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -52,7 +73,37 @@ def team_api(team):
 
 
 def team_vs_team_api(team1,team2):
-    pass
+
+    temp_df = df[df['batting_team'].isin([team1, team2]) & (df['bowling_team'].isin([team1, team2]))].groupby('match_id').tail(1)
+
+    # overall win
+    win_team1 = temp_df[(temp_df['winning_team'] == team1) | (temp_df['superover_winner'] == team1)]['winning_team'].count()
+    win_team2 = temp_df[(temp_df['winning_team'] == team2) | (temp_df['superover_winner'] == team2)]['winning_team'].count()
+
+    # Win in hometown of team1
+    city1 = ipl_teams_hometowns[team1]
+    city1_team1 = temp_df[(temp_df['city'] == city1) &((temp_df['winning_team'] == team1) | (temp_df['superover_winner'] == team1))]['winning_team'].count()
+    city1_team2 = temp_df[(temp_df['city'] == city1) &((temp_df['winning_team'] == team2) | (temp_df['superover_winner'] == team2))]['winning_team'].count()
+
+    # win in homwtown of team2
+    city2 = ipl_teams_hometowns[team2]
+    city2_team1 = temp_df[(temp_df['city'] == city2) &((temp_df['winning_team'] == team1) | (temp_df['superover_winner'] == team1))]['winning_team'].count()
+    city2_team2 = temp_df[(temp_df['city'] == city2) &((temp_df['winning_team'] == team2) | (temp_df['superover_winner'] == team2))]['winning_team'].count()
+
+    # win in neutral venue
+    neutral_team1 = temp_df[(~temp_df['city'].isin([city1,city2])) &((temp_df['winning_team'] == team1) | (temp_df['superover_winner'] == team1))]['winning_team'].count()
+    neutral_team2 = temp_df[(~temp_df['city'].isin([city1,city2])) &((temp_df['winning_team'] == team2) | (temp_df['superover_winner'] == team2))]['winning_team'].count()
+
+    team_vs_team_dict = {team1:{'Won':win_team1,
+                              'In {}'.format(city1):city1_team1,
+                              'In {}'.format(city2): city2_team1,
+                              'In Neutral':neutral_team1},
+                      team2:{'Won':win_team2,
+                              'In {}'.format(city1):city1_team2,
+                              'In {}'.format(city2): city2_team2,
+                              'In Neutral':neutral_team2}
+                      }
+    return json.dumps(team_vs_team_dict, cls = NpEncoder, indent = 4)
 
 def player_vs_team_api(player):
     pass
