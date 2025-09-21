@@ -89,3 +89,11 @@ df['team2'] = df['team2'].apply(lambda x: ",".join(x))
 # convert to csv format and dump
 df.to_csv('Dataset/ipl_matches_cleaned.csv',index = False)
 
+
+#This code was used to extract names of all players but since they were in short form i used Chatgpt to get there full name
+# and dumped it into json file named players_names
+temp_df = df.groupby('match_id').tail(1)
+players = set()
+temp_df['team1'].apply(lambda player_list: players.update(player_list))
+temp_df['team2'].apply(lambda player_list: players.update(player_list))
+

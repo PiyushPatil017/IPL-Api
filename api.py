@@ -50,6 +50,13 @@ def team_name_api():
     teams = sorted(df['batting_team'].unique())
     return json.dumps(teams, cls = NpEncoder, indent =4)
 
+def player_name_api():
+    with open('players_names.json','r') as rf:
+        response = json.load(rf)
+        response = sorted(response.values())
+        # there are some 6 names that are double need to do something about them in data cleaning
+        # Kuldeep yadav,
+    return json.dumps(response, cls = NpEncoder, indent = 4)
 
 def team_api(team):
     temp_df = df[(df['bowling_team'] == team) | (df['batting_team'] == team)].groupby('match_id').tail(1)

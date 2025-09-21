@@ -20,6 +20,12 @@ def team_name():
     response = api.team_name_api()
     return response
 
+# Returns player names
+@app.route('/player_name')
+def player_name():
+    response = api.player_name_api()
+    return response
+
 # Returns Player overall and season wise Record
 @app.route('/player_record')
 def player_record():
@@ -28,7 +34,7 @@ def player_record():
     return response
 
 # Returns player record against teams
-@app.route('/player-vs-team')
+@app.route('/player_vs_team')
 def player_vs_team():
     player = request.args.get('player')
     response = api.player_vs_team_api(player)
