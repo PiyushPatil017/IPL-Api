@@ -1,2 +1,4 @@
 .venv
 Dataset/ipl
+.idea
+__pycache__
