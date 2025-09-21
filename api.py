@@ -55,7 +55,7 @@ def player_name_api():
         response = json.load(rf)
         response = sorted(response.values())
         # there are some 6 names that are double need to do something about them in data cleaning
-        # Kuldeep yadav,
+        # Kuldeep yadav, chris green, virat kohli
     return json.dumps(response, cls = NpEncoder, indent = 4)
 
 def team_api(team):
