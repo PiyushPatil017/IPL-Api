@@ -42,9 +42,13 @@ class NpEncoder(json.JSONEncoder):
             return obj.tolist()
         return super(NpEncoder, self).default(obj)
 
+def season_name_api():
+    seasons = sorted(df['season'].unique())
+    return json.dumps(seasons, cls = NpEncoder, indent = 4)
+
 def team_name_api():
-    # df['batting_team'].unique()
-    pass
+    teams = sorted(df['batting_team'].unique())
+    return json.dumps(teams, cls = NpEncoder, indent =4)
 
 
 def team_api(team):
