@@ -42,6 +42,10 @@ class NpEncoder(json.JSONEncoder):
             return obj.tolist()
         return super(NpEncoder, self).default(obj)
 
+def team_name_api():
+    # df['batting_team'].unique()
+    pass
+
 
 def team_api(team):
     temp_df = df[(df['bowling_team'] == team) | (df['batting_team'] == team)].groupby('match_id').tail(1)
@@ -104,6 +108,7 @@ def team_vs_team_api(team1,team2):
                               'In Neutral':neutral_team2}
                       }
     return json.dumps(team_vs_team_dict, cls = NpEncoder, indent = 4)
+
 
 def player_vs_team_api(player):
     pass
