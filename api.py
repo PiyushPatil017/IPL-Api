@@ -6,10 +6,6 @@ import json
 import re
 
 df = pd.read_csv('Dataset/ipl_matches_cleaned.csv')
-df['team1'] = df['team1'].apply(lambda x: x.split(','))
-df['team2'] = df['team2'].apply(lambda x: x.split(','))
-df['season'] = df['season'].astype('category')
-df['date'] = pd.to_datetime(df['date'])
 
 # replace Player name which are doubles
 def replace_player(data):
@@ -20,7 +16,13 @@ def replace_player(data):
 df['team1'] = df['team1'].apply(replace_player)
 df['team2'] = df['team2'].apply(replace_player)
 
+# conver team1 and team2 column to list dtype
+df['team1'] = df['team1'].apply(lambda x: x.split(','))
+df['team2'] = df['team2'].apply(lambda x: x.split(','))
+df['season'] = df['season'].astype('category')
+df['date'] = pd.to_datetime(df['date'])
 
+# hometown ground of teams
 ipl_teams_hometowns = {
     "Chennai Super Kings": "Chennai",
     "Mumbai Indians": "Mumbai",
