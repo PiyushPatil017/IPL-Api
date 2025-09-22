@@ -19,7 +19,7 @@ df['team2'] = df['team2'].apply(replace_player)
 # conver team1 and team2 column to list dtype
 df['team1'] = df['team1'].apply(lambda x: x.split(','))
 df['team2'] = df['team2'].apply(lambda x: x.split(','))
-df['season'] = df['season'].astype('category')
+df['season'] = df['season'].astype('string')
 df['date'] = pd.to_datetime(df['date'])
 
 # hometown ground of teams
@@ -83,12 +83,15 @@ def team_api(team):
     total_draw = temp_df[temp_df['result_type'] == 'no result']['result_type'].count()
     total_loss = total_match - total_win - total_draw
     trophy = temp_df[(temp_df['stage'] == 'Final') & (temp_df['winning_team'] == team)]['winning_team'].count()
+    trophy_year = temp_df[(temp_df['stage'] == 'Final') & (temp_df['winning_team'] == team)]['season'].values.tolist()
+    trophy_year = ",".join(trophy_year)
 
     team_overall_dict = {'Overall': {'Total Match': total_match,
                                      'Total Win': total_win,
                                      'Total Loss': total_loss,
                                      'Total Draw': total_draw,
-                                     'Trophys': trophy}
+                                     'Trophys': trophy,
+                                     'trophy_years':trophy_year}
                          }
     # Season wise record of team
     team_season_dict = {season: {} for season in temp_df['season'].unique()}
