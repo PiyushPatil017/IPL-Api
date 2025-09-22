@@ -3,12 +3,23 @@
 import numpy as np
 import pandas as pd
 import json
+import re
 
 df = pd.read_csv('Dataset/ipl_matches_cleaned.csv')
 df['team1'] = df['team1'].apply(lambda x: x.split(','))
 df['team2'] = df['team2'].apply(lambda x: x.split(','))
 df['season'] = df['season'].astype('category')
 df['date'] = pd.to_datetime(df['date'])
+
+# replace Player name which are doubles
+def replace_player(data):
+  replacement = {'Arshad Khan (2)':'Arshad Khan' , 'Virat Kohli': 'V Kohli', 'Anureet Singh':'A Singh', 'Kuldeep Yadav': 'K Yadav' ,'Navdeep Saini':'N Saini'}
+  for old_word,new_word in replacement.items():
+    data = re.sub(r'{}'.format(old_word),'{}'.format(new_word),data)
+  return data
+df['team1'] = df['team1'].apply(replace_player)
+df['team2'] = df['team2'].apply(replace_player)
+
 
 ipl_teams_hometowns = {
     "Chennai Super Kings": "Chennai",
@@ -42,22 +53,25 @@ class NpEncoder(json.JSONEncoder):
             return obj.tolist()
         return super(NpEncoder, self).default(obj)
 
+
+# returns seasons
 def season_name_api():
     seasons = sorted(df['season'].unique())
     return json.dumps(seasons, cls = NpEncoder, indent = 4)
 
+#returns team name
 def team_name_api():
     teams = sorted(df['batting_team'].unique())
     return json.dumps(teams, cls = NpEncoder, indent =4)
 
+# returns player names
 def player_name_api():
     with open('players_names.json','r') as rf:
         response = json.load(rf)
-        response = sorted(response.values())
-        # there are some 6 names that are double need to do something about them in data cleaning
-        # Kuldeep yadav, chris green, virat kohli
+        response = sorted(response.keys())
     return json.dumps(response, cls = NpEncoder, indent = 4)
 
+# returns team record
 def team_api(team):
     temp_df = df[(df['bowling_team'] == team) | (df['batting_team'] == team)].groupby('match_id').tail(1)
 
@@ -86,7 +100,7 @@ def team_api(team):
 
     return json.dumps(team_overall_dict, cls=NpEncoder, indent=4)
 
-
+# returns team vs team record
 def team_vs_team_api(team1,team2):
 
     temp_df = df[df['batting_team'].isin([team1, team2]) & (df['bowling_team'].isin([team1, team2]))].groupby('match_id').tail(1)
@@ -120,7 +134,7 @@ def team_vs_team_api(team1,team2):
                       }
     return json.dumps(team_vs_team_dict, cls = NpEncoder, indent = 4)
 
-
+# returns player vs team record
 def player_vs_team_api(player):
     pass
 
