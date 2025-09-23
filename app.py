@@ -40,20 +40,20 @@ def player_vs_team():
     response = api.player_vs_team_api(player)
     return response
 
-# Returns rivalry record of teams
-@app.route('/team_vs_team')
-def team_vs_team():
-    team1 = request.args.get('team1')
-    team2 = request.args.get('team2')
-    response = api.team_vs_team_api(team1,team2)
-    return response
-
 # Returns overall record of team
 @app.route('/team')
 def team():
     team = request.args.get('team')
     response = api.team_api(team)
     print(response)
+    return response
+
+# Returns rivalry record of teams
+@app.route('/team_vs_team')
+def team_vs_team():
+    team1 = request.args.get('team1')
+    team2 = request.args.get('team2')
+    response = api.team_vs_team_api(team1,team2)
     return response
 
 
