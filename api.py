@@ -146,7 +146,7 @@ def player_vs_team_api(player):
 
 # Player Season-wise and Overall Record
 def player_record_api(player):
-    seasons = sorted(df['season'].unique())
+    seasons = df[(df['team1'].apply(lambda player_list: player in player_list)) | (df['team2'].apply(lambda player_list: player in player_list))].groupby('season')['season'].tail(1).values
     player_season_dict = {"Player": player,
                           'Batting': {'Overall Record': {},
                                       'Season': {season: {} for season in seasons}
@@ -244,7 +244,7 @@ def player_record_api(player):
         # Runs Conceded
         player_season_dict['Bowling']['Season'][season]['Runs'] = runs_bowler_each_season[season]
         # Wickets Taken
-        player_season_dict['Bowling']['Season'][season]['Wicket'] = wicket_each_season[season]
+        player_season_dict['Bowling']['Season'][season]['Wickets'] = wicket_each_season[season]
         # Bowling Average
         player_season_dict['Bowling']['Season'][season]['Average'] = round((runs_bowler_each_season[season] / wicket_each_season[season]),2)
         # Bowling Economy
