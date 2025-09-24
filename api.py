@@ -147,15 +147,15 @@ def player_vs_team_api(player):
 # Player Season-wise and Overall Record
 def player_record_api(player):
     seasons = sorted(df['season'].unique())
-    player_season_dict = {"Player":player,
-                        'Batting':{'Season':{season:{} for season in seasons}
-                                   },
-                        'Bowling':{'Season':{season:{} for season in seasons}
-                                   },
-                        'Overall Record':{'Batting':{},
-                                          'Bowling':{}
-                                          }
-                        }
+    player_season_dict = {"Player": player,
+                          'Batting': {'Overall Record': {},
+                                      'Season': {season: {} for season in seasons}
+
+                                      },
+                          'Bowling': {'Overall Record': {},
+                                      'Season': {season: {} for season in seasons}
+                                      }
+                          }
 
     # Batting Record
     # Player Batting Record Season Wise
@@ -203,24 +203,24 @@ def player_record_api(player):
 
     # Batting Overall Record
     # Total matches played by player in his entire IPL carrer
-    player_season_dict['Overall Record']['Batting']['Matches'] = match_each_season.sum()
+    player_season_dict['Batting']['Overall Record']['Matches'] = match_each_season.sum()
     # Total runs scored by player in his entire IPL carrer
-    player_season_dict['Overall Record']['Batting']['Runs'] = runs_each_season.sum()
+    player_season_dict['Batting']['Overall Record']['Runs'] = runs_each_season.sum()
     # Total 100s scored by player in his entire IPL carrer
-    player_season_dict['Overall Record']['Batting']['100s'] = hundreds_each_season.sum()
+    player_season_dict['Batting']['Overall Record']['100s'] = hundreds_each_season.sum()
     # Total 50s scored by player in his entire IPL carrer
-    player_season_dict['Overall Record']['Batting']['50s'] = fifty_each_season.sum()
+    player_season_dict['Batting']['Overall Record']['50s'] = fifty_each_season.sum()
     # Highest Score in IPL carrer
-    player_season_dict['Overall Record']['Batting']['Highest Score'] = highest_each_season.max()
+    player_season_dict['Batting']['Overall Record']['Highest Score'] = highest_each_season.max()
     # Total 4s and 6s hit by player in his entire IPL carrer
-    player_season_dict['Overall Record']['Batting']['4s'] = fours_each_season.sum()
-    player_season_dict['Overall Record']['Batting']['6s'] = sixs_each_season.sum()
+    player_season_dict['Batting']['Overall Record']['4s'] = fours_each_season.sum()
+    player_season_dict['Batting']['Overall Record']['6s'] = sixs_each_season.sum()
     # Total balls faced by player in his entire IPL carrer
-    player_season_dict['Overall Record']['Batting']['Balls Faced'] = balls_each_season.sum()
+    player_season_dict['Batting']['Overall Record']['Balls Faced'] = balls_each_season.sum()
     # Strike Rate in IPL carrer
-    player_season_dict['Overall Record']['Batting']['Strike Rate'] = round(((runs_each_season.sum()/balls_each_season.sum()) *100),2)
+    player_season_dict['Batting']['Overall Record']['Strike Rate'] = round(((runs_each_season.sum()/balls_each_season.sum()) *100),2)
     # Batting Average
-    player_season_dict['Overall Record']['Batting']['Average'] = round((runs_each_season.sum()/out_each_season.sum()),2)
+    player_season_dict['Batting']['Overall Record']['Average'] = round((runs_each_season.sum()/out_each_season.sum()),2)
 
 
 
@@ -263,26 +263,26 @@ def player_record_api(player):
 
     # Bowling Overall Record
     # Total matches played by player in his entire IPL carrer
-    player_season_dict['Overall Record']['Bowling']['Matches'] = match_each_season.sum()
+    player_season_dict['Bowling']['Overall Record']['Matches'] = match_each_season.sum()
     # Total Balls Delivered in IPL carrer
-    player_season_dict['Overall Record']['Bowling']['Balls'] = balls_delivered_each_season.sum()
+    player_season_dict['Bowling']['Overall Record']['Balls'] = balls_delivered_each_season.sum()
     # Total Runs Conceded in IPL carrer
-    player_season_dict['Overall Record']['Bowling']['Runs'] = runs_bowler_each_season.sum()
+    player_season_dict['Bowling']['Overall Record']['Runs'] = runs_bowler_each_season.sum()
     # Total wicket taken by player in his entire IPL carrer
-    player_season_dict['Overall Record']['Bowling']['Wickets'] = wicket_each_season.sum()
+    player_season_dict['Bowling']['Overall Record']['Wickets'] = wicket_each_season.sum()
     # Bowling Average in IPL carrer
-    player_season_dict['Overall Record']['Bowling']['Average'] = round((runs_bowler_each_season.sum() / wicket_each_season.sum()),2)
+    player_season_dict['Bowling']['Overall Record']['Average'] = round((runs_bowler_each_season.sum() / wicket_each_season.sum()),2)
     # Bowling Economy in IPL carrer
     temp_df = df[(df['bowler'] == player) & (df['innings'] <3)].groupby('match_id')['over'].unique()
     total_overs_bowled = temp_df.apply(lambda x: len(x)).sum()
-    player_season_dict['Overall Record']['Bowling']['Economy'] = runs_bowler_each_season.sum()/total_overs_bowled
+    player_season_dict['Bowling']['Overall Record']['Economy'] = runs_bowler_each_season.sum()/total_overs_bowled
     # Bowling Strike rate in IPL carrer
-    player_season_dict['Overall Record']['Bowling']['Strike Rate'] = round((balls_delivered_each_season.sum() / wicket_each_season.sum()),2)
+    player_season_dict['Bowling']['Overall Record']['Strike Rate'] = round((balls_delivered_each_season.sum() / wicket_each_season.sum()),2)
     # Total 4 Wicket Haul in IPL carrer
     temp_df = df[(df['bowler'] == player) & (df['bowler_wicket'] == 1) & (df['innings'] <3)].groupby('match_id')['bowler_wicket'].sum()
-    player_season_dict['Overall Record']['Bowling']['4W'] = temp_df[temp_df == 4].count().sum()
+    player_season_dict['Bowling']['Overall Record']['4W'] = temp_df[temp_df == 4].count().sum()
     # Total 5 Wicket Haul in IPL carrer
-    player_season_dict['Overall Record']['Bowling']['5W'] = temp_df[temp_df >= 5].count().sum()
+    player_season_dict['Bowling']['Overall Record']['5W'] = temp_df[temp_df >= 5].count().sum()
 
 
     return json.dumps(player_season_dict,cls = NpEncoder, indent = 4)
